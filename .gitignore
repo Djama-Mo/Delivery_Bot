@@ -1,0 +1,9 @@
+pattern.txt
+txt_vars.py
+message_txt.py
+patterns.py
+places.py
+.envrc
+.idea
+*.pyc
+venv/

@@ -1,0 +1,6 @@
+pyTelegramBotAPI==3.7.6
+urllib3==1.26.3
+psycopg2-binary==2.8.6
+direnv==2020.12.3
+redis==3.5.3
+geopy==2.1.0
