@@ -10,16 +10,16 @@ def menu(bot: TeleBot, callback: CallbackQuery):
     markup = InlineKeyboardMarkup()
     lang = redis_cache.get_language(chat_id)
     if lang == 'uz':
-        catalog = catalog_uz
+        _catalog = catalog_uz
         self_data = self_uz
         cart = cart_uz
         menu_but = menu_but_uz
     else:
-        catalog = catalog_ru
+        _catalog = catalog_ru
         self_data = self_ru
         cart = cart_ru
         menu_but = menu_but_ru
-    button_catalog = InlineKeyboardButton(text=f'{catalog} 🛍', callback_data='catalog')
+    button_catalog = InlineKeyboardButton(text=f'{_catalog} 🛍', callback_data='catalog')
     button_self = InlineKeyboardButton(text=f'{self_data} 🧾', callback_data='self')
     button_cart = InlineKeyboardButton(text=f'{cart} 🛒', callback_data='cart')
     markup.add(button_catalog, button_self).add(button_cart)

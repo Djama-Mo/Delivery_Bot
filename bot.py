@@ -10,7 +10,7 @@ from message_txt import *
 from get_location import send_venue
 import redis_cache
 from intro_functions import req_fio, req_sex, req_num, req_geo
-from menu import menu, self, name_changed, num_changed, sex_changed
+from catalog_w_products import menu, self, name_changed, num_changed, sex_changed, catalog, product_list, show_product
 from sql import MySQL
 from os import getenv
 from direnv import load
@@ -37,6 +37,12 @@ def query_messages(callback: CallbackQuery):
             req_fio(bot, callback)
     elif data == 'menu':
         menu(bot, callback)
+    elif data == 'catalog':
+        catalog(bot, callback.message, sql)
+    elif 'cat_' in data:
+        product_list(bot, callback.message, sql, data[4:])
+    elif 'prod_' in data:
+        show_product(bot, callback.message, sql, data[5:])
     elif data == 'self':  # Profile
         self(bot, callback, sql)
     elif 'place_' in data:  # Place selected

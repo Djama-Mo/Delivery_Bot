@@ -97,3 +97,25 @@ class MySQL(object):
             return
         self.connect.commit()
         return
+
+    def select_categories_from_category(self):
+        try:
+            self.cursor.execute('''SELECT name, id
+                                    FROM public.category''')
+        except Error as error:
+            print(error)
+            return
+        categories = self.cursor.fetchall()
+        return categories
+
+    def select_products_from_product(self, category):
+        try:
+            self.cursor.execute('''SELECT id, name
+                                    FROM public.product
+                                    WHERE category_id=(%s)''',
+                                (category, ))
+        except Error as error:
+            print(error)
+            return
+        products = self.cursor.fetchall()
+        return products
