@@ -27,22 +27,68 @@ def product_list(bot, message, sql, category):
     except ValueError as error:
         print(error)
         print(product_list.__name__)
+        return
     chat_id = message.chat.id
     products = sql.select_products_from_product(category)
     lang = redis_cache.get_language(chat_id)
     if lang == 'uz':
         select = select_uz
         menu_but = menu_but_uz
+        back = back_uz
     else:
         select = select_ru
         menu_but = menu_but_ru
+        back = back_ru
     markup = InlineKeyboardMarkup()
     for _product in products:
         markup.add(InlineKeyboardButton(text=_product[1], callback_data=f'prod_{_product[0]}'))
-    markup.add(InlineKeyboardButton(text=menu_but, callback_data='menu'))
+    markup.add(InlineKeyboardButton(text=back, callback_data='catalog'),
+               InlineKeyboardButton(text=menu_but, callback_data='menu'))
     bot.delete_message(chat_id=chat_id, message_id=message.message_id)
     bot.send_message(chat_id=chat_id, text=select, reply_markup=markup)
 
 
-def show_product(bot, message, sql, product):
-    pass
+def show_product(bot: TeleBot, message, sql, product_id):
+    try:
+        product_id = int(product_id)
+    except ValueError as error:
+        print(error)
+        print(product_list.__name__)
+        return
+    chat_id = message.chat.id
+    product = sql.select_product_info_from_product(product_id)
+    if product is None:
+        return
+    name = product[0]
+    price = product[1]
+    count = product[2]
+    _type = product[3]
+    picture_id = product[4]
+    category_id = product[5]
+    product_url = None
+    if picture_id is not None:
+        product_url = sql.select_product_url_from_picture(picture_id)
+    lang = redis_cache.get_language(chat_id)
+    if lang == 'uz':
+        menu_but = menu_but_uz
+        back = back_uz
+        product_name = product_name_uz
+        product_price = product_price_uz
+        product_count = product_count_uz
+    else:
+        menu_but = menu_but_ru
+        back = back_ru
+        product_name = product_name_ru
+        product_price = product_price_ru
+        product_count = product_count_ru
+    caption = f'<u>{product_name}</u>: <b>{name}</b>\n' \
+              f'<u>{product_price}</u>: <b>{price}</b>\n' \
+              f'<u>{product_count}</u>: <b>{count} {_type}</b>'
+    markup = InlineKeyboardMarkup()
+    markup.add(InlineKeyboardButton(text=back, callback_data=f'cat_{category_id}'),
+               InlineKeyboardButton(text=menu_but, callback_data='menu'))
+    bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+    if product_url is not None:
+        bot.send_photo(chat_id=chat_id, photo=product_url[0], caption=caption, parse_mode='html', reply_markup=markup)
+    else:
+        bot.send_message(chat_id=chat_id, text=caption, parse_mode='html', reply_markup=markup)

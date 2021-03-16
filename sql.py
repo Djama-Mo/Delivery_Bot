@@ -119,3 +119,26 @@ class MySQL(object):
             return
         products = self.cursor.fetchall()
         return products
+
+    def select_product_info_from_product(self, product):
+        try:
+            self.cursor.execute('''SELECT name, price, count, type, picture_id, category_id
+                                    FROM public.product
+                                    WHERE id=(%s)''',
+                                (product, ))
+        except Error as error:
+            print(error)
+            return
+        product = self.cursor.fetchone()
+        return product
+
+    def select_product_url_from_picture(self, picture_id):
+        try:
+            self.cursor.execute('''SELECT url
+                                    FROM public.picture
+                                    WHERE id=(%s)''',
+                                (picture_id, ))
+        except Error as error:
+            print(error)
+        url = self.cursor.fetchone()
+        return url
