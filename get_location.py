@@ -14,7 +14,7 @@ def location(message: Message):
     long = message.location.longitude
     geolocator = Nominatim(user_agent="MarDel_Bot")
     loc = geolocator.reverse(f'{lat}, {long}').address
-    redis_cache.write_user_address(message.chat.id, loc)
+    redis_cache.set_user_address(message.chat.id, loc)
     nearly_places = []
     index = 0
     for place in places:

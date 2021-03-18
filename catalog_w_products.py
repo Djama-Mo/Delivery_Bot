@@ -75,16 +75,26 @@ def show_product(bot: TeleBot, message, sql, product_id):
         product_name = product_name_uz
         product_price = product_price_uz
         product_count = product_count_uz
+        product_add = product_add_uz
+        product_delete = product_delete_uz
     else:
         menu_but = menu_but_ru
         back = back_ru
         product_name = product_name_ru
         product_price = product_price_ru
         product_count = product_count_ru
+        product_add = product_add_ru
+        product_delete = product_delete_ru
     caption = f'<u>{product_name}</u>: <b>{name}</b>\n' \
-              f'<u>{product_price}</u>: <b>{price}</b>\n' \
+              f'<u>{product_price} {_type}</u>: <b>{price}</b>\n' \
               f'<u>{product_count}</u>: <b>{count} {_type}</b>'
+    if _type == "кг":
+        tmp_count = 0.5
+    else:
+        tmp_count = 1
     markup = InlineKeyboardMarkup()
+    markup.add(InlineKeyboardButton(text=f'{product_add} {tmp_count}{_type}', callback_data=f'add_{product_id}'),
+               InlineKeyboardButton(text=f'{product_delete} {tmp_count}{_type}', callback_data=f'del_{product_id}'))
     markup.add(InlineKeyboardButton(text=back, callback_data=f'cat_{category_id}'),
                InlineKeyboardButton(text=menu_but, callback_data='menu'))
     bot.delete_message(chat_id=chat_id, message_id=message.message_id)

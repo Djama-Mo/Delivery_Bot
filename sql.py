@@ -120,12 +120,12 @@ class MySQL(object):
         products = self.cursor.fetchall()
         return products
 
-    def select_product_info_from_product(self, product):
+    def select_product_info_from_product(self, product_id):
         try:
             self.cursor.execute('''SELECT name, price, count, type, picture_id, category_id
                                     FROM public.product
                                     WHERE id=(%s)''',
-                                (product, ))
+                                (product_id, ))
         except Error as error:
             print(error)
             return
