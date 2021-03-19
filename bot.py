@@ -14,6 +14,7 @@ from message_txt import *
 from get_location import send_venue
 from intro_functions import req_fio, req_sex, req_num, req_geo
 from catalog_w_products import (menu, self, name_changed, num_changed, sex_changed, catalog, product_list, show_product)
+from show_cart import cart
 
 
 load()
@@ -39,18 +40,22 @@ def query_messages(callback: CallbackQuery):
         menu(bot, callback)
     elif data == 'catalog':
         catalog(bot, callback.message, sql)
+    elif data == 'cart':
+        cart(bot, callback)
     elif 'cat_' in data:  # Selected category
         product_list(bot, callback.message, sql, data[4:])
     elif 'prod_' in data:  # Selected product
         show_product(bot, callback.message, sql, data[5:])
     elif 'add_' in data:  # Add product
         product_id = int(data[4:])
-        if redis_cache.set_product(chat_id, product_id, sql) is True:
-            bot.answer_callback_query(callback.id, text='OK', show_alert=True)
+        result = redis_cache.set_product(chat_id, product_id, sql)
+        if result is not False:
+            bot.answer_callback_query(callback.id, text=result, show_alert=True)
     elif 'del_' in data:  # Delete product
         product_id = int(data[4:])
-        if redis_cache.del_product(chat_id, product_id, sql) is True:
-            bot.answer_callback_query(callback.id, text='OK', show_alert=True)
+        result = redis_cache.del_product(chat_id, product_id, sql)
+        if result is not False:
+            bot.answer_callback_query(callback.id, text=result, show_alert=True)
     elif data == 'self':  # Profile
         self(bot, callback, sql)
     elif 'place_' in data:  # Place selected

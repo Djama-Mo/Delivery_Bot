@@ -157,11 +157,11 @@ def set_product(chat_id, product_id, sql):
         pass
     new_count = old_count + count
     if new_count > left:
-        return False
+        return f'{name} - {new_count}{_type}\nMAX'
     key = key_str % (name, product_id, new_count, price)
     product.update(loads(key))
     rediska.set(f'{chat_id}_product', str(product).replace("'", '"'), ex=86400)
-    return True
+    return f'{name} - {new_count}{_type}'
 
 
 def del_product(chat_id, product_id, sql):
@@ -175,14 +175,16 @@ def del_product(chat_id, product_id, sql):
     else:
         count = 1
     product = get_product(chat_id)
+    new_count = 0
     try:
         if product[name]['count'] == count:
             del product[name]
         elif product[name]['count'] > count:
             product[name]['count'] -= count
+            new_count = product[name]['count']
         rediska.set(f'{chat_id}_product', str(product).replace("'", '"'), ex=86400)
     except KeyError as error:
         print(error)
         print(set_product.__name__)
         return False
-    return True
+    return f'{name} - {new_count}{_type}'
